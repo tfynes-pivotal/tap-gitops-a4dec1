@@ -1,0 +1,201 @@
+tap_install:
+  values:
+    excluded_packages: []
+    shared:
+      ingress_domain: a4.fynesy.com
+      ingress_issuer: ""
+    ceip_policy_disclosed: true
+    profile: full
+    supply_chain: basic
+    ootb_supply_chain_basic:
+      registry:
+        server: harbor.harborlab.fynesy.net
+        repository: tap
+      gitops:
+        ssh_secret: workload-git-auth
+    ootb_supply_chain_testing_scanning:
+      registry:
+        server: harbor.harborlab.fynesy.net
+        repository: tap
+      gitops:
+        ssh_secret: workload-git-auth
+    contour:
+      envoy:
+        service:
+          type: LoadBalancer
+    buildservice:
+      kp_default_repository: harbor.harborlab.fynesy.net/tap/buildservice
+    tap_gui:
+      tls:
+        namespace: tanzu-system-ingress
+        secretName: taptlscert
+      service_type: ClusterIP
+      metadataStoreAutoconfiguration: true
+      app_config:
+        auth:
+          allowGuestAccess: true
+        catalog:
+          locations:
+          - type: url
+            target: http://github.com/tfynes-pivotal/tapblankcatalog/blob/main/catalog-info.yaml
+    metadata_store:
+      ns_for_export_app_cert: '*'
+      app_service_type: ClusterIP
+    grype:
+      namespace: default
+      targetImagePullSecret: registries-credentials
+    policy:
+      tuf_enabled: false
+    cnrs:
+      domain_template: '{{.Name}}-{{.Namespace}}.{{.Domain}}'
+      default_tls_secret: tanzu-system-ingress/taptlscert
+    api_portal:
+      apiPortalServer:
+        sourceUrls: https://petstore.swagger.io/v2/swagger.json,http://scg-openapi-service.spring-cloud-gateway.svc.cluster.local/openapi
+        trustInsecureSourceUrls: true
+        sourceUrlsCacheTtlSec: "30"
+        sourceUrlsTimeoutSec: "30"
+      sso:
+        enabled: true
+        secretName: sso-credentials
+        apiManager:
+          roles: tanzu.read
+      apiKey:
+        enabled: true
+        vault:
+          url: http://vault.vault.svc:8200/
+          role: api-portal-role
+          path: api-portal-for-vmware-tanzu
+      serviceAccount:
+        create: true
+        name: api-portal
+    local_source_proxy:
+      repository: harbor.harborlab.fynesy.net/tap/local-source
+      push_secret:
+        name: lsp-push-credentials
+        namespace: tap-install
+        create_export: true
+    namespace_provisioner:
+      controller: false
+      gitops_install:
+        ref: origin/main
+        subPath: clusters/taplab/cluster-config/namespaces
+        url: https://github.com/tfynes-pivotal/tap-gitops-a4dec1
+        secretRef:
+          name: git-auth
+          namespace: tap-install
+          create_export: true
+      additional_sources:
+      - git:
+          ref: origin/main
+          subPath: clusters/taplab/cluster-config/namespaces/namespace-resources
+          url: https://github.com/tfynes-pivotal/tap-gitops-a4dec1
+          secretRef:
+            name: git-auth-install
+            namespace: tap-install
+            create_export: true
+        path: _ytt_lib/namespace-resources
+      default_parameters:
+        supply_chain_service_account:
+          secrets:
+          - workload-git-auth
+    package_overlays:
+    - name: api-portal
+      secrets:
+      - name: api-portal-cm-tls-overlay-secret
+    - name: accelerator
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: api-auto-registration
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: appliveview
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: appliveview-apiserver
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: appliveview-connector
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: appliveview-conventions
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: appsso
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: bitnami-services
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: buildservice
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: cartographer
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: cert-manager
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: cnrs
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: contour
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: crossplane
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: developer-conventions
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: fluxcd-source-controller
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: grype
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: metadata-store
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: namespace-provisioner
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: ootb-delivery-basic
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: ootb-supply-chain-basic
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: ootb-templates
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: policy-controller
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: scanning
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: service-bindings
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: services-toolkit
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: source-controller
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: spring-boot-conventions
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: tap-auth
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: tap-gui
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: tap-telemetry
+      secrets:
+      - name: reqfix-overlay-secret
+    - name: tekton-pipelines
+      secrets:
+      - name: reqfix-overlay-secret

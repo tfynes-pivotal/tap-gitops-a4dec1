@@ -1,0 +1,13 @@
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClassClaim
+metadata:
+  annotations:
+    classclaims.services.apps.tanzu.vmware.com/xrd-name: xpostgresqlinstances.bitnami.database.tanzu.vmware.com
+  finalizers:
+  - classclaims.services.apps.tanzu.vmware.com/provision-finalizer
+  name: postgres1
+  namespace: default
+spec:
+  classRef:
+    name: postgresql-unmanaged
+  parameters: {}

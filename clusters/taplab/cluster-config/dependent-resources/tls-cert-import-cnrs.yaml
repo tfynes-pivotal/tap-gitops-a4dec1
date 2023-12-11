@@ -1,0 +1,8 @@
+---
+apiVersion: secretgen.carvel.dev/v1alpha1
+kind: SecretImport
+metadata:
+  name: taptlscert
+  namespace: tanzu-system-ingress
+spec:
+  fromNamespace: tap-install

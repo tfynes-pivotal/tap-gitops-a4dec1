@@ -1,0 +1,13 @@
+apiVersion: tanzu.vmware.com/v1
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: spring-petclinic-gateway-route
+  namespace: default
+spec:
+  service:
+    name: spring-petclinic-protected
+  routes:
+  - predicates:
+    - Path=/**
+    filters:
+    - StripPrefix=0
